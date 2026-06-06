@@ -13,7 +13,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,16 +78,26 @@ WSGI_APPLICATION = 'jobapplication.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER':os.environ.get('DB_USER'),
-        'PASSWORD':os.environ.get('DB_PASSWORD'),
-        'HOST':os.environ.get('DB_HOST','localhost'),
-        'PORT':os.environ.get('DB_PORT','5432')
+
+DATABASE_BACKEND=config('DATABASE_BACKEND',default='sqlite')
+if DATABASE_BACKEND=='postgres':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER':os.environ.get('DB_USER'),
+            'PASSWORD':os.environ.get('DB_PASSWORD'),
+            'HOST':os.environ.get('DB_HOST','localhost'),
+            'PORT':os.environ.get('DB_PORT','5432')
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
