@@ -1,12 +1,16 @@
 node{
-    agent any
-    stage('Info'){
-        echo "Current Branch:${env.BRANCH_NAME}"
+    stage('Install'){
+        sh """
+        cd backend
+        pip install -r requirements.txt
+        """
     }
-    stage('test'){
-        echo 'jenkins testing'
+
+    stage("Test"){
+        sh """
+        cd backend
+        python3 manage.py test
+        """
     }
-    stage('deploye'){
-        echo 'jenkins delployment'
-    }
+    
 }
