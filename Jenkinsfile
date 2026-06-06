@@ -8,9 +8,11 @@ node{
 
     stage("Test"){
         sh """
+        pwd
+        ls -l
         cd backend
         python3 manage.py test
         """
     }
-    
+
 }
