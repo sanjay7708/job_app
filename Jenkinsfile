@@ -1,12 +1,30 @@
-node{
-    agent any
-    stage('Info'){
-        echo "Current Branch:${env.BRANCH_NAME}"
+node {
+
+    stage('Checkout') {
+        checkout scm
     }
-    stage('test'){
-        echo 'jenkins testing'
+
+    stage('Debug') {
+        sh '''
+        pwd
+        ls -la
+        '''
     }
-    stage('deploye'){
-        echo 'jenkins delployment'
+
+    stage('Install') {
+        sh '''
+        cd backend
+        python3 -m venv myvenv
+        . myvenv/bin/activate
+        
+        pip install -r requirements.txt
+        '''
+    }
+
+    stage('Test') {
+        sh '''
+        cd backend
+        python3 manage.py test
+        '''
     }
 }
