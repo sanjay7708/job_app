@@ -24,6 +24,7 @@ node {
     stage('Test') {
         sh '''
         cd backend
+        . myvenv/bin/activate
         python3 manage.py test
         '''
     }
