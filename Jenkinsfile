@@ -1,31 +1,30 @@
-node {
+pipeline{
+    agent any
+    stages{
+        stage('checkout'){
+            checkout scm
+        }
+        stage('Debug'){
+            sh"""
+                pwd
+                ls -la
+            """
 
-    stage('Checkout') {
-        checkout scm
-    }
-
-    stage('Debug') {
-        sh '''
-        pwd
-        ls -la
-        '''
-    }
-
-    stage('Install') {
-        sh '''
-        cd backend
-        python3 -m venv myvenv
-        . myvenv/bin/activate
-        
-        pip install -r requirements.txt
-        '''
-    }
-
-    stage('Test') {
-        sh '''
-        cd backend
-        . myvenv/bin/activate
-        python3 manage.py test
-        '''
+        }
+        stage('Install'){
+            sh"""
+                cd backend
+                python3 -m venv myvenv
+                . myvenv/bin/activate
+                pip install -r requirements.txt
+            """
+        }
+        stage('Test'){
+            sh"""
+                cd backend
+                . myvenv/bin/activate
+                python3 manage.py test
+            """
+        }
     }
 }
