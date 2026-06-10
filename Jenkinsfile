@@ -5,26 +5,35 @@ pipeline{
             checkout scm
         }
         stage('Debug'){
-            sh"""
+            steps{
+                sh"""
                 pwd
                 ls -la
             """
+            }
+            
 
         }
         stage('Install'){
-            sh"""
+            steps{
+                sh"""
                 cd backend
                 python3 -m venv myvenv
                 . myvenv/bin/activate
                 pip install -r requirements.txt
             """
+            }
+            
         }
         stage('Test'){
-            sh"""
+            steps{
+                sh"""
                 cd backend
                 . myvenv/bin/activate
                 python3 manage.py test
             """
+            }
+            
         }
     }
 }
