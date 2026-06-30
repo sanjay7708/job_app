@@ -9,6 +9,7 @@ pipeline{
         }
         stage('Debug'){
             steps{
+                
                 sh"""
                 pwd
                 ls -la

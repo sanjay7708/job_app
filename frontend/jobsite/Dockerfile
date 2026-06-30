@@ -1,10 +1,15 @@
-FROM node:20-alphine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /jobsite
 
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 5173
-RUN ["npm","run","dev","--","--host"]
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /jobsite/dist /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 
