@@ -1,5 +1,10 @@
 pipeline{
-    agent any
+    agent{
+        docker{
+            image 'python:3.11'
+            args '--network=ci-net'
+        }
+    }
     environment{
         DB_NAME = "jobapplication"
         DB_USER = "postgres"
@@ -27,29 +32,7 @@ pipeline{
         }
         stage('Start Postgres Container'){
             steps{
-                sh '''
-                    docker rm -f jenkins-postgres || true
-
-                     docker run -d \
-                    --name jenkins-postgres \
-                    -e POSTGRES_DB=jobapplication \
-                    -e POSTGRES_USER=postgres \
-                    -e POSTGRES_PASSWORD=password123 \
-                    -p 5432:5432 \
-                    postgres:16
-                '''
-            }
-        }
-
-        stage('Wait for Start Postgres'){
-            steps{
-                sh '''
-                    until docker exec jenkins-postgres pg_isready -U postgres
-                    do
-                        echo "waiting for postgreSQL.."
-                        sleep2 
-                    done
-                '''
+               sh 'docker run -d --name pg --network=ci-net -e POSTGRES_PASSWORD=pass postgres:16'
             }
         }
         stage('Install'){
