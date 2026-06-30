@@ -25,6 +25,33 @@ pipeline{
             
 
         }
+        stage('Start Postgres Container'){
+            steps{
+                sh '''
+                    docker rm -f jenkins-postgres || true
+
+                     docker run -d \
+                    --name jenkins-postgres \
+                    -e POSTGRES_DB=jobapplication \
+                    -e POSTGRES_USER=postgres \
+                    -e POSTGRES_PASSWORD=password123 \
+                    -p 5432:5432 \
+                    postgres:16
+                '''
+            }
+        }
+
+        stage('Wait for Start Postgres'){
+            steps{
+                sh '''
+                    until docker exec jenkins-postgres pg_isready -U postgres
+                    do
+                        echo "waiting for postgreSQL.."
+                        sleep2 
+                    done
+                '''
+            }
+        }
         stage('Install'){
             steps{
                 sh"""
