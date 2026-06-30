@@ -1,16 +1,7 @@
 pipeline{
-    agent{
-        docker{
-            image 'python:3.11'
-            args '--network=ci-net'
-        }
-    }
+    agent any
     environment{
-        DB_NAME = "jobapplication"
-        DB_USER = "postgres"
-        DB_PASSWORD = "password123"
-        DB_HOST = "localhost"
-        DB_PORT = "5432"
+        USE_SQLITE = 'True'
     }
     stages{
         stage('checkout'){
@@ -30,11 +21,7 @@ pipeline{
             
 
         }
-        stage('Start Postgres Container'){
-            steps{
-               sh 'docker run -d --name pg --network=ci-net -e POSTGRES_PASSWORD=pass postgres:16'
-            }
-        }
+
         stage('Install'){
             steps{
                 sh"""
