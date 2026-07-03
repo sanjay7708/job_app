@@ -13,7 +13,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
-from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-6fz6%wg52+ja^oqp5zn=pyg-2-99um)(#iiu1xiu2-ugni=*+t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -78,27 +78,26 @@ WSGI_APPLICATION = 'jobapplication.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+USE_SQLITE = os.getenv("USE_SQLITE", "False") == "True"
 
-DATABASE_BACKEND=config('DATABASE_BACKEND',default='sqlite')
-if DATABASE_BACKEND=='postgres':
+if USE_SQLITE:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER':os.environ.get('DB_USER'),
-            'PASSWORD':os.environ.get('DB_PASSWORD'),
-            'HOST':os.environ.get('DB_HOST','localhost'),
-            'PORT':os.environ.get('DB_PORT','5432')
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT", "5432"),
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -136,11 +135,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
+    "http://65.2.166.232:3001",
     "http://localhost:5173",
     "http://172.27.171.254:5173"
 ]
 CORS_ALLOW_CREDENTIALS=True
 CSRF_TRUSTED_ORIGINS = [
+    "http://65.2.166.232:3001",
     "http://localhost:5173",
     "http://172.27.171.254:5173"
 ]
